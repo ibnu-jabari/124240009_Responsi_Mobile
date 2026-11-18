@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// Gambar dari internet dengan placeholder saat loading dan saat gagal.
+import '../utils/app_colors.dart';
+
+/// Gambar dari internet dengan indikator loading dan placeholder saat gagal.
 class NetImage extends StatelessWidget {
   final String url;
   final double? width;
@@ -17,8 +19,6 @@ class NetImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const warna = Color(0xFF2C2C2E);
-
     return Image.network(
       url,
       width: width,
@@ -26,14 +26,30 @@ class NetImage extends StatelessWidget {
       fit: fit,
       loadingBuilder: (context, child, progress) {
         if (progress == null) return child;
-        return Container(width: width, height: height, color: warna);
+        return Container(
+          width: width,
+          height: height,
+          color: AppColors.placeholder,
+          child: const Center(
+            child: SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
+        );
       },
       errorBuilder: (context, error, stackTrace) {
         return Container(
           width: width,
           height: height,
-          color: warna,
-          child: const Icon(Icons.videogame_asset, color: Colors.grey),
+          color: AppColors.placeholder,
+          child: const Center(
+            child: Icon(
+              Icons.image_not_supported_outlined,
+              color: AppColors.textSecondary,
+            ),
+          ),
         );
       },
     );

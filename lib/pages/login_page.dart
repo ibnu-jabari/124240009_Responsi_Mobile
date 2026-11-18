@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../services/session_service.dart';
+import '../utils/app_colors.dart';
 import 'main_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -22,10 +23,12 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _showMessage(String message, Color color) {
+  void _showMessage(String message) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message), backgroundColor: color));
+      ..showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: AppColors.danger),
+      );
   }
 
   Future<void> _login() async {
@@ -34,11 +37,11 @@ class _LoginPageState extends State<LoginPage> {
 
     // Kredensial bebas, tapi tidak boleh kosong dan email harus berformat benar.
     if (email.isEmpty || password.isEmpty) {
-      _showMessage('Email dan password wajib diisi', Colors.red);
+      _showMessage('Email dan password wajib diisi');
       return;
     }
     if (!email.contains('@') || !email.contains('.')) {
-      _showMessage('Format email tidak valid', Colors.red);
+      _showMessage('Format email tidak valid');
       return;
     }
 
@@ -55,20 +58,22 @@ class _LoginPageState extends State<LoginPage> {
   InputDecoration _decoration(String hint, IconData icon, {Widget? suffix}) {
     OutlineInputBorder border(Color color) {
       return OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         borderSide: BorderSide(color: color),
       );
     }
 
     return InputDecoration(
       hintText: hint,
-      prefixIcon: Icon(icon),
+      hintStyle: const TextStyle(color: AppColors.textSecondary),
+      prefixIcon: Icon(icon, color: AppColors.textSecondary),
       suffixIcon: suffix,
       filled: true,
-      fillColor: const Color(0xFF1C1C1E),
-      border: border(const Color(0xFF3A3A3C)),
-      enabledBorder: border(const Color(0xFF3A3A3C)),
-      focusedBorder: border(Colors.blue),
+      fillColor: Colors.white,
+      contentPadding: const EdgeInsets.symmetric(vertical: 18),
+      border: border(AppColors.border),
+      enabledBorder: border(AppColors.border),
+      focusedBorder: border(AppColors.primary),
     );
   }
 
@@ -78,35 +83,58 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Icon(Icons.sports_esports, size: 80, color: Colors.blue),
+                // Logo dan nama aplikasi
+                const Icon(
+                  Icons.shopping_bag_rounded,
+                  size: 64,
+                  color: AppColors.primary,
+                ),
                 const SizedBox(height: 8),
                 const Text(
-                  'Raja Mart',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  'Shopedia',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.primary,
+                    letterSpacing: 0.5,
+                  ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 36),
+                const Text(
+                  'Masuk',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 16),
                 TextField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
-                  decoration: _decoration('Email', Icons.email),
+                  decoration: _decoration('Email', Icons.email_outlined),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 TextField(
                   controller: _passwordController,
                   obscureText: _sembunyikan,
                   onSubmitted: (_) => _login(),
                   decoration: _decoration(
                     'Password',
-                    Icons.lock,
+                    Icons.lock_outline,
                     suffix: IconButton(
                       icon: Icon(
-                        _sembunyikan ? Icons.visibility : Icons.visibility_off,
+                        _sembunyikan
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                        color: AppColors.textSecondary,
                       ),
                       onPressed: () {
                         setState(() => _sembunyikan = !_sembunyikan);
@@ -114,14 +142,19 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
                 FilledButton(
                   style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(52),
                     shape: const StadiumBorder(),
                   ),
                   onPressed: _login,
-                  child: const Text('Login'),
+                  child: const Text(
+                    'Login',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
                 ),
               ],
             ),

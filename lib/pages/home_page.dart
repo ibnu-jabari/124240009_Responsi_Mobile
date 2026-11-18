@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../models/produk.dart';
+import '../models/product.dart';
 import '../services/api_service.dart';
+import '../utils/app_colors.dart';
+import '../widgets/product_card.dart';
 import 'detail_page.dart';
 
-/// Tab Home: daftar semua game dari API.
+/// Tab Home: daftar produk dari API dalam bentuk GridView.
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -13,23 +15,23 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Future<List<Produk>> _future;
+  late Future<List<Product>> _future;
 
   @override
   void initState() {
     super.initState();
-    _future = ApiService.fetchProduks();
+    _future = ApiService.fetchProducts();
   }
 
   void _muatUlang() {
     setState(() {
-      _future = ApiService.fetchProduks();
+      _future = ApiService.fetchProducts();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Produk>>(
+    return FutureBuilder<List<Product>>(
       future: _future,
       builder: (context, snapshot) {
         // 1) Loading indicator
@@ -45,13 +47,18 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.wifi_off, size: 48, color: Colors.grey),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Gagal memuat daftar game. Periksa koneksi internet.',
-                    textAlign: TextAlign.center,
+                  const Icon(
+                    Icons.wifi_off_rounded,
+                    size: 48,
+                    color: AppColors.textSecondary,
                   ),
                   const SizedBox(height: 12),
+                  const Text(
+                    'Gagal memuat produk. Periksa koneksi internet.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: AppColors.textSecondary),
+                  ),
+                  const SizedBox(height: 16),
                   FilledButton.icon(
                     onPressed: _muatUlang,
                     icon: const Icon(Icons.refresh),
@@ -63,24 +70,26 @@ class _HomePageState extends State<HomePage> {
           );
         }
 
-        // 3) Tampilkan list
-        final produk = snapshot.data ?? [];
-        return ListView.builder(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          itemCount: produk.length,
+        // 3) Tampilkan GridView produk
+        final products = snapshot.data ?? [];
+        return GridView.builder(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 14,
+            crossAxisSpacing: 14,
+            childAspectRatio: 0.66,
+          ),
+          itemCount: products.length,
           itemBuilder: (context, index) {
-            final produkItem = produk[index];
-            return ListTile(
-              title: Text(produkItem.title),
-              trailing: const Padding(
-                padding: EdgeInsets.only(right: 8),
-                child: Icon(Icons.chevron_right),
-              ),
+            final product = products[index];
+            return ProductCard(
+              product: product,
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => DetailPage(produkId: produkItem.id),
+                    builder: (_) => DetailPage(productId: product.id),
                   ),
                 );
               },

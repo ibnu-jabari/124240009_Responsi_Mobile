@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Menyimpan informasi login di SharedPreferences.
+/// Selama belum logout, data ini tetap ada walaupun aplikasi ditutup.
 class SessionService {
   static const String _keyEmail = 'email';
   static const String _keyLoggedIn = 'is_logged_in';
